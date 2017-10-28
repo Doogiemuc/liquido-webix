@@ -1,0 +1,37 @@
+[Open Files]
+Active File Display Mode=1
+Active File Index=1
+Open File Line0=380
+Open File Line1=220
+Open File Line2=156
+Open File Line3=49
+Open File Line4=0
+Open File Pos0=692
+Open File Pos1=883
+Open File Pos2=652
+Open File Pos3=285
+Open File Pos4=1405
+Open File Window Pos0=0,1,-1,-1,-1,-1,5,31,1324,670
+Open File Window Pos1=0,1,-1,-1,-1,-1,5,31,1324,670
+Open File Window Pos2=0,1,-1,-1,-1,-1,5,31,1324,670
+Open File Window Pos3=0,1,-1,-1,-1,-1,5,31,1324,670
+Open File Window Pos4=0,1,-1,-1,-1,-1,5,31,1324,670
+Open File0=C:\Doogie\Coding\WebDev\liquido-webix\sources\views\dashboard.js
+Open File1=C:\Doogie\Coding\WebDev\liquido-webix\sources\views\modules\recentIdeas.js
+Open File2=C:\Doogie\Coding\WebDev\liquido-webix\assets\liquido.less
+Open File3=C:\Doogie\Coding\WebDev\liquido-webix\sources\models\ideasProxy.js
+Open File4=C:\Doogie\Coding\WebDev\liquido-webix\test\mockdata\recentIdeas.js
+Open File5=
+Remember Files=1
+
+[Project Information]
+	Project Start=E1070A0005001B0008001E00350000006D
+
+[Folders]
+	.\=1
+	.\ - assets=1
+	.\ - sources=1
+	.\ - sources - views=1
+	.\ - test=1
+	.\ - test - mockdata=1
+

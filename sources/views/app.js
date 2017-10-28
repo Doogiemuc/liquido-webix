@@ -8,60 +8,58 @@ import menu		from "views/menus/sidebar";
 import "views/webix/icon";
 import "views/webix/menutree";
 
-
+var that
 
 export default class AppView extends JetView {
 	config(){
 		return layout;
 	}
 	init(){
+		that = this
 		this.ui(search);
 		this.ui(mail);
 		this.ui(message);
 		this.ui(profile);
+		$$('scrollviewId').adjust();  // must update the scrollview to make it adjust to its container
 	}
 }
 
 //Top toolbar
 var mainToolbar = {
 	view: "toolbar",
-	
 	elements:[
 		{view: "label", label: "<a href='http://webix.com'><img class='photo' src='assets/imgs/logo.png' /></a>", width: 200},
-
+		{view: "button", type:"next", label:"Ideas", align:"left", click: () => { that.show("ideas") }  },
+		{view: "button", type:"next", label:"Proposals", align:"left" },
+		{view: "button", type:"next", label:"Polls", align:"left" },
+		{view: "button", type:"next", label:"Laws", align:"left" },
+		{},
+		{view: "icon", icon: "search",  width: 45, popup: "searchPopup"},
+		{view: "icon", icon: "envelope-o", value: 3, width: 45, popup: "mailPopup"},
+		{view: "icon", icon: "comments-o", value: 5, width: 45, popup: "messagePopup"},
 		{ height:46, id: "person_template", css: "header_person", borderless:true, width: 180, data: {id:3,name: "Oliver Parr"},
 			template: function(obj){
-				var html = 	"<div style='height:100%;width:100%;' onclick='webix.$$(\"profilePopup\").show(this)'>";
+				var html = 	"<div style='height:100%;width:100%' onclick='webix.$$(\"profilePopup\").show(this)'>";
 				html += "<img class='photo' src='assets/imgs/photos/"+obj.id+".png' /><span class='name'>"+obj.name+"</span>";
 				html += "<span class='webix_icon fa-angle-down'></span></div>";
 				return html;
 			}
 		},
-		{},
-		{view: "icon", icon: "search",  width: 45, popup: "searchPopup"},
-		{view: "icon", icon: "envelope-o", value: 3, width: 45, popup: "mailPopup"},
-		{view: "icon", icon: "comments-o", value: 5, width: 45, popup: "messagePopup"}
 	]
-};
+}
 
+//Content body (with vertical scrollbar)
 var body = {
-	rows:[
-		{ height: 49, id: "title", css: "title", template: "<div class='header'>#title#</div><div class='details'>( #details# )</div>", data: {text: "",title: ""}},
-		{
-			view: "scrollview", scroll:"native-y",
-			body:{ cols:[{ $subview:true}] }
-		}
-	]
-};
+	id: "scrollviewId",
+	view: "scrollview", 
+	scroll:"y",
+	body:{ cols:[{ $subview:true}, ] }
+}
 
+//Main outer layout
 var layout = {
 	rows:[
 		mainToolbar,
-		{
-			cols:[
-				menu,
-				body
-			]
-		}
+		body
 	]
-};
+}

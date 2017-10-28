@@ -18,6 +18,9 @@ module.exports = function(env) {
 			filename: "admin.js"
 		},
 		devtool: "inline-source-map",
+		devServer: {
+			port: 3003
+		},
 		module: {
 			rules: [
 				{
