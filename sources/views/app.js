@@ -8,14 +8,12 @@ import sidebar	from "views/menus/sidebar";
 import "views/webix/icon";
 import "views/webix/menutree";
 
-var that
 
 export default class AppView extends JetView {
 	config(){
 		return layout;
 	}
 	init(view, url){
-		that = this
 		this.ui(search);
 		this.ui(mail);
 		this.ui(message);
@@ -28,14 +26,20 @@ export default class AppView extends JetView {
 var mainToolbar = {
 	view: "toolbar",
 	elements:[
-		{view: "label", label: "<a route='/app/start'><i class='fa fa-university'></i> LIQUIDO</a>", css:"liquido_title", width: 200},
-		{view: "button", type:"next", label:"Ideas", align:"left", click: () => { that.show("ideasTable") }  },
-		{view: "button", type:"next", label:"Proposals", align:"left" },
-		{view: "button", type:"next", label:"Polls", align:"left" },
-		{view: "button", type:"next", label:"Laws", align:"left" },
+		{ view: "label", label: "<a route='/app/start'><i class='fa fa-university'></i> LIQUIDO</a>", css:"liquido_title", width: 200},
+		{ view: "button", type:"next", label:"Ideas", align:"left", click: 
+		  function() { this.$scope.show("ideasTable") }  
+		},
+		{ view: "button", type:"next", label:"Proposals", align:"left" },
+		{ view: "button", type:"next", label:"Polls", align:"left" },
+		{ view: "button", type:"next", label:"Laws", align:"left" },
 		{},
-		//{view: "icon", icon: "search",  width: 45, popup: "searchPopup"},
-		//{view: "icon", icon: "envelope-o", value: 3, width: 45, popup: "mailPopup"},
+		//{ view: "icon", icon: "search",  width: 45, popup: "searchPopup"},
+		//{ view: "icon", icon: "envelope-o", value: 3, width: 45, popup: "mailPopup"},
+		{ view: "button", id: "Login", type: "icon", icon: "user-circle-o", label: "Login", autowidth: true, click: 
+		  function() { this.$scope.show('loginForm') }
+		},
+		/*
 		{view: "icon", icon: "bell-o", value: 5, width: 45, popup: "messagePopup"},
 		{ height:46, id: "person_template", css: "header_person", borderless:true, width: 180, data: {id:3,name: "Oliver Parr"},
 			template: function(obj){
@@ -45,6 +49,7 @@ var mainToolbar = {
 				return html;
 			}
 		},
+		*/
 	]
 }
 
