@@ -2,7 +2,7 @@ import {JetView} from "webix-jet";
 
 //import orderform from "views/forms/order";
 //import exportwin from "views/menus/export";
-import ideasProxy from "models/ideasProxy";
+import ideasProxy from "apiClient/ideasProxy";
 
 /** A full width table with a list of ideas */
 export default class IdeasView extends JetView{

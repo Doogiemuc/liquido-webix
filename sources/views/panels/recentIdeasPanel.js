@@ -2,9 +2,8 @@
  * Panel with a list of recent ideas (shown on UserHome)
  */
 
-//import ideasProxy from "models/ideasProxy";
-import recentIdeasData from "../../../test/mockdata/recentIdeas"
-import utils from "../../utils"
+import ideasProxy from "apiClient/ideasProxy";
+import utils from "views/viewUtils"
 
 
 var ideaLeft = function(obj) {
@@ -33,7 +32,7 @@ const recentIdeas = {
   id: "recentIdeasList",
 	rows:[
 		{
-			template: "<span class='webix_icon fa-lightbulb-o'></span>Recently created ideas", type:"header", "css": "sub_title"
+			template: "<span class='webix_icon fa-lightbulb-o'></span>Recently added ideas", type:"header", "css": "sub_title"
 		},
 		{
 		  id: "recentIdeasTable",
@@ -48,7 +47,7 @@ const recentIdeas = {
 		    { id:"ideaDetails", fillspace: 0.2, template: ideaRight }
 		  ],
 		  rowHeight: 85,
-		  data: recentIdeasData,
+		  data: ideasProxy,
 		},
 		
 		

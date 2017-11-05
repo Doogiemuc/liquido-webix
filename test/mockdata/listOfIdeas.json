@@ -1,6 +1,3 @@
-
-
-var idasResponse =
 {
   "_embedded" : {
     "laws" : [ {
@@ -556,5 +553,3 @@ var idasResponse =
     "number" : 0
   }
 }
-
-export default idasResponse._embedded.laws

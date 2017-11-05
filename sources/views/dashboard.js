@@ -5,7 +5,6 @@ import messages 	from "views/modules/messages";
 import revenue 		from "views/modules/revenue";
 import tasks 		from "views/modules/tasks";
 import map 			from "views/modules/map";
-import recentIdeas from "views/modules/recentIdeas";
 
 const layout = {
 	type: "clean",
@@ -14,13 +13,6 @@ const layout = {
 		{
 			type: "space",
 			rows:[
-			  {
-			  	type: "wide",
-			  	cols: [
-			  	  recentIdeas,
-			  	  recentIdeas,
-			  	]
-			  },
 				{
 					height: 220,
 					type: "wide",

@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint sources/",
-    "build": "webpack --env.production true",
-    "dev": "webpack-dev-server"
+    "build": "webpack --env.NODE_ENV=PROD",
+    "dev": "webpack-dev-server --env.NODE_ENV=DEV"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
     "webpack-dev-server": "^2.8.2"
   },
   "dependencies": {
+    "loglevel": "^1.5.1",
     "webix-jet": "^1.0.0"
   }
 }

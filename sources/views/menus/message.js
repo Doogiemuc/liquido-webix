@@ -1,27 +1,38 @@
+import messagesProxy from 'apiClient/messagesProxy'
+
+function getMessageText(obj) {
+  var html = ""
+  switch (obj.msgType) {
+	case "reachedQuorumSince":
+	  html += "<i class='fa fa-fw fa-lightbulb-o pull-left'></i> <p class='message_text'>Your idea <b>'"+obj.title+"'</b> reached its quorum.</p>"
+	  break;
+	case "supportedByUser":
+	  html += "<i class='fa fa-fw fa-balance-scale pull-left'></i> <p class='message_text'>The proposal <b>'"+obj.title+"'</b> is supported by you.</p>"
+	  break;
+	default:
+	  html += "Some news about <b>'"+obj.title+"'</b>"
+  }
+  return html
+}
+
 const ui = {
 	view: "popup",
 	id: "messagePopup",
-	width: 300,
+	width: 500,
 	padding:0,
-	css:"list_popup",
+	css:"messages_popup",
 	body:{
 		type: "clean",
 		borderless:true,
 		rows:[
 			{
 				view: "list",
-				autoheight: true,
-				data: [
-					{id: 1, name: "Mario Douglas", text: "Lorem ipsum dolor sit amet", personId:1},
-					{id: 2, name: "Sofia Lee", text: "Praesent luctus nulla enim, pellentesque condimentum ", personId:2},
-					{id: 3, name: "Kim Alley", text: "Lorem ipsum dolor sit amet", personId:2},
-					{id: 4, name: "Jeremy O'Neal", text: "Morbi eget facilisis risus", personId:1},
-					{id: 5, name: "Paul Jackson", text: "Cras lacinia bibendum arcu", personId:1}
-				],
+				//autoheight: true,
+				height: 300,
+				url: messagesProxy, 
 				type:{
 					height: 45,
-					template: "	<img class='photo' src='assets/imgs/photos/#personId#.png' /><span class='text'>#text#</span><span class='name'>#name#</span>"
-
+					template: getMessageText
 				}
 			},
 			{

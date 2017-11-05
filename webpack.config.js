@@ -5,17 +5,17 @@ module.exports = function(env) {
 
 	var pack = require("./package.json");
 	var ExtractTextPlugin = require("extract-text-webpack-plugin");
-	var production = !!(env && env.production === "true");
+	var production = !!(env && env.NODE_ENV === "PROD");
 	var babelSettings = {
 		extends: path.join(__dirname, '/.babelrc')
 	};
 
 	var config = {
-		entry: "./sources/admin.js",
+		entry: "./sources/liquido.js",
 		output: {
 			path: path.join(__dirname, "codebase"),
 			publicPath:"/codebase/",
-			filename: "admin.js"
+			filename: "liquido.js"
 		},
 		devtool: "inline-source-map",
 		devServer: {
@@ -39,14 +39,14 @@ module.exports = function(env) {
 		},
 		resolve: {
 			extensions: [".js"],
-			modules: ["./sources", "node_modules"],
+			modules: ["./sources", "./test", "node_modules"],
 			alias:{
 				"jet-views":path.resolve(__dirname, "sources/views"),
 				"jet-locales":path.resolve(__dirname, "sources/locales")
 			}
 		},
 		plugins: [
-			new ExtractTextPlugin("./admin.css"),
+			new ExtractTextPlugin("./liquido.css"),
 			new webpack.DefinePlugin({
 				VERSION: `"${pack.version}"`,
 				APPNAME: `"${pack.name}"`,
@@ -54,6 +54,24 @@ module.exports = function(env) {
 			})
 		]
 	};
+
+	/** load different configigurations, depending on the environment */
+	if (env && env.NODE_ENV === "DEV") {
+		var backendBaseURL = 'http://localhost:8080';
+		console.log("====== Development mode. Routing backend requests to "+backendBaseURL)
+		config.resolve.alias.liquidoConfig = path.resolve(__dirname, "config/dev.config.js")
+		config.devServer.proxy = {
+			'/liquido/v2': {
+				target: backendBaseURL,
+				secure: false
+			}
+		}
+	} 
+	else 
+	{
+		console.log("======= PRODUCTION BUILD")
+		config.resolve.alias.liquidoConfig = path.resolve(__dirname, "config/prod.config.js")
+	}
 
 	if (production) {
 		config.plugins.push(

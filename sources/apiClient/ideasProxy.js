@@ -2,8 +2,8 @@
  * Proxy that loads ideas from the backend
  * Handles paging and sorting.
  */
-
-const ideasUrl = "http://localhost:8080/liquido/v2/laws/search/findByStatus?status=IDEA"
+ 
+import conf from 'liquidoConfig'
 
 /*
  * https://webix.com/snippet/8fd8d824
@@ -12,12 +12,12 @@ const ideasUrl = "http://localhost:8080/liquido/v2/laws/search/findByStatus?stat
  *  Spring Data Rest interface:
  * https://docs.spring.io/spring-data/rest/docs/current/reference/html/#paging-and-sorting.sorting
  */
-export default ideasProxy = {
+export default {
 	$proxy:true,
 	load:function(view, callback, params) {
-		var url = ideasUrl
+		var url = conf.url.base + conf.url.ideas
 		params = webix.extend(params||{}, this.params||{}, true);
-    if(params && params.start !== undefined && params.count !== undefined) {   
+		if(params && params.start !== undefined && params.count !== undefined) {   
 		  //Webix params:
 		  //  params.start - number of first record to load 
 		  //  params.count - the number of records to fetch from that start position
@@ -25,19 +25,20 @@ export default ideasProxy = {
 		  //  page - the page to show
 		  //  size - page size 
 		  
-		  var page = params.start / params.count
+		  var page = Math.floor(params.start / params.count)
+		  //console.log("requesting page", params.start, "/", params.count, "=", page)
           url += "&page="+page+"&size="+params.count
 		}
-		if (params.sort) {
+		if (params && params.sort) {
 		  if (params.sort.id == "createdBy") {
 		    url += "&sort=createdBy.profile.name," + params.sort.dir
 		  } else {
 		    url += "&sort="+params.sort.id + "," + params.sort.dir
 		  }
 		}
-	  console.log("Loading ideas", params, url)
+	  
 		webix.ajax().get(url).then(function(data){
-      console.log("GET ", url, "returned", data.json())
+        console.log("GET ", url, "returned", data.json())
 		  var response = {
 			  data: data.json()._embedded.laws,
 			  pos: params.start || 0,
@@ -47,8 +48,14 @@ export default ideasProxy = {
     }).catch(err => {
 		  console.error("ERROR", err);
 		})
-	}
+	},
+	
+	//TODO: save() and update()  an idea
 };
+
+
+
+
 
 
 
