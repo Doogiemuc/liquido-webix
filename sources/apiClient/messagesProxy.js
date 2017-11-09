@@ -1,5 +1,5 @@
 /**
- * Proxy that loads ideas from the backend
+ * Proxy that loads news messages from the backend
  * Handles paging and sorting.
  */
 
@@ -11,15 +11,18 @@ import conf from 'liquidoConfig'
 export default {
 	$proxy:true,
 	load:function(view, callback, params) {
-		//fetch ideas that reached their quorum within the last two weeks
+		// Load proposals that reached their quorum within the last two weeks
 		var dateFormatFunc = webix.Date.dateToStr("%Y-%m-%d")
 		var twoWeeksAgo = new Date()
 		    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);  // setDate is in days
 		var dateStr = dateFormatFunc(twoWeeksAgo)
 		var reachQuorumSinceUrl = conf.url.base + conf.url.reachedQuorumSince + "?since=" + dateStr
-
-		var findSupportedByUrl = conf.url.base + conf.url.findSupportedBy + "?status=PROPOSAL&user=user/1"   //TODO:  get user id of currently logged in user
 		
+		// and load all proposals that are supported by the currently logged in user
+		var userId = 'user/1'		  //TODO:  get user id of currently logged in user
+		var findSupportedByUrl = conf.url.base + conf.url.findSupportedBy + "?status=PROPOSAL&user="+userId 
+		
+		// in two parallel HTTP requests
 		var a = webix.ajax(reachQuorumSinceUrl)
 		var b = webix.ajax(findSupportedByUrl)
 		

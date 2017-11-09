@@ -7,7 +7,8 @@
  */
 
 var http = require('http')
-var	fs = require('fs');
+var	fs = require('fs')
+var path = require('path')
 var loglevel = require("loglevel")
 var log = loglevel.getLogger("MockLiquidoBackend");
 log.setLevel("TRACE")
@@ -19,7 +20,7 @@ var port = 4444
 // Start an HTTP server
 exports.startHttpServer = function() {
 	httpServer = http.createServer(function (req, res) {
-		log.debug("=> MockLiquidoBackend: "+req.method+" "+req.url);
+		log.debug("=> MockLiquidoBackend: ", req.method, req.url, req.headers["Authorization"]);
 		RouteManager.findRoute(req,res);
 	});
 	httpServer.on('error',function(err){
@@ -36,23 +37,24 @@ exports.stopHttpServer = function() {
 }
 
 var apiBasePath  = '/liquido/v2'
-var mockDataPath = '../mockdata'
+var mockDataPath = __dirname+'/../mockdata'
 
 /**
  * Return a a curried function    https://medium.com/@kbrainwave/currying-in-javascript-ce6da2d324fe
  * that accepts request and response as parameter and sends the content of the given filename as HTTP reply
  */
 function sendFile(filename) {
-	return function (req, res) {   
+	return function (req, res) { 
+    var fullFileName = path.join(mockDataPath, filename)
 		try { 
-			var responseJson = fs.readFileSync(mockDataPath+"/"+filename, 'utf8');
+			var responseJson = fs.readFileSync(fullFileName, 'utf8');
 		} catch (err) {
-			log.error("Cannot find file "+mockDataPath+"/"+filename, err)
+			log.error("Cannot find file "+fullFileName, err)
 			res.writeHead(500)
 			res.end()
 			return
 		}		
-		log.debug("<= MockLiquidoBackend: "+responseJson.substring(0, 100))
+		log.debug("<= MockLiquidoBackend: "+fullFileName+"\n"+responseJson.substring(0, 100))
 		res.writeHead(200, {'Content-Type': 'application/json'})
 		res.write(responseJson)
 		res.end()

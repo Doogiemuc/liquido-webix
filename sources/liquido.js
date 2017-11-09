@@ -2,7 +2,8 @@
 import "../assets/app.less";
 import "../assets/liquido.less"
 import {JetApp} from "webix-jet";
-import auth from "apiClient/authenticate"
+import conf from "liquidoConfig"
+import sessionMgmtPlugin from "plugins/SessionMgmtPlugin"
 
 webix.codebase = "//cdn.webix.com/components/";
 
@@ -23,6 +24,14 @@ webix.ready(function(){
 		window.console.error(err);
 		webix.delay(() => this.show("/app/start"));
 	});
+	
+	app.use(sessionMgmtPlugin, { 
+		findByEMailUrl: conf.url.base + conf.url.findByEmail
+	})
+	
+	if (AUTOLOGIN) {
+	  app.getService("session").login(conf.defaultUser, conf.defaultPass)		
+	}
 	
 	app.render();  // mandatory !!
 });
