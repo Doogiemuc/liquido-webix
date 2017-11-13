@@ -92,8 +92,7 @@ const grid = {
 const controls = {
 	cols:[
 		{ view: "button", type: "iconButton", icon: "plus", label: "Add idea", width: 130, click: function(){
-			//this.$scope._form.show(this.$view);
-			//TODO: navigate to createNewIdea page
+			this.$scope.show('crudIdea');
 		}},
 		{}, // horizontal placeholder
 		{

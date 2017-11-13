@@ -57,15 +57,15 @@ export default function SessionMgmtPlugin(app, view, config) {
 				logout() {
 					user = null;
 					userEMail = null;+
-					console.log("removing event" , onBeforeAjaxEvent)
+					console.log("removing onBeforeAjaxEvent" , onBeforeAjaxEvent)
 					webix.removeEvent(onBeforeAjaxEvent)
 				}, 
 				
 				/** add the authorisatino header to all outgoing AJAX requests */
 				attachOnBeforeAjaxEvent(accessToken) {
-					console.log("attach Event", userEMail, this)
+					//console.log("attach onBeforeAjasEvent", userEMail, this)
 					onBeforeAjaxEvent = webix.attachEvent("onBeforeAjax", function (mode, url, data, request, headers) {
-						console.log(mode, url, userEMail)
+						console.log("=>", mode, url, userEMail)
 						headers["Accept"] = "application/hal+json";
 						if (undefined === headers["Authorization"]) {
 							//console.log("adding access token to request", url)

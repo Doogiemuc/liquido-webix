@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint sources/",
     "build": "webpack --env.NODE_ENV=PROD",
-    "dev": "webpack-dev-server --env.NODE_ENV=DEV",
-		"mock": "node test/mockLiquidoBackend/startMockBackend.js"
+    "dev":  "webpack-dev-server --env.NODE_ENV=DEV",
+		"mock": "webpack-dev-server --env.NODE_ENV=MOCK",
+		"mockBackend": "node test/mockLiquidoBackend/startMockBackend.js"
   },
   "repository": {
     "type": "git",

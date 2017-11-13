@@ -14,6 +14,7 @@ import conf from 'liquidoConfig'
  */
 export default {
 	$proxy:true,
+	
 	load:function(view, callback, params) {
 		var url = conf.url.base + conf.url.ideas
 		params = webix.extend(params||{}, this.params||{}, true);
@@ -36,7 +37,6 @@ export default {
 				url += "&sort="+params.sort.id + "," + params.sort.dir
 			}
 		}
-	  
 		webix.ajax().get(url).then(function(data){
 			console.log("GET ", url, "returned", data.json())
 		  var response = {
@@ -50,7 +50,13 @@ export default {
 		})
 	},
 	
-	//TODO: save() and update()  an idea
+	save: function(newIdeaData) {
+	  console.log("ideaProxy.save", newIdeaData)
+	},
+	
+	update: function(ideaData) {
+	  console.log("ideaProxy.update", ideaData)
+	}
 };
 
 
@@ -99,7 +105,10 @@ export const ideasProxy = function(params) {
 
 */
 
-/*  Webix DataCollection  (loads all data at once)7
+/*  Webix DataCollection  (loads all data at once)
+    Also needs a DAtaProcessor for editing
+    https://docs.webix.com/desktop__nonui_objects.html
+    
 export const data = new webix.DataCollection({
 		url:function() {
 		var url = "http://localhost:8080/liquido/v2/laws/search/findByStatus?status=IDEA"
