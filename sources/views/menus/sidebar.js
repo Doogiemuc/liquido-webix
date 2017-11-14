@@ -2,25 +2,14 @@ import {JetView, plugins} from "webix-jet";
 
 const menudata = [
 	{id: "main", value: "Main", open: true, data:[
-		{ id: "dashboard", value: "Dashboard", icon: "home", $css: "dashboard", details:"reports and statistics"},
-		{ id: "orders", value: "Orders", icon: "check-square-o", $css: "orders", details:"order reports and editing"},
-		{ id: "products", value: "Products", icon: "cube", $css: "products", details:"all products"},
-		{ id: "ideasTable", value: "Ideas", icon: "lightbulb-o", details: "All Ideas"},
-		{ id: "product_edit", value: "Product Edit", icon: "pencil-square-o", details: "changing product data"}
+		{ id: "start", value: "Start", icon: "home", details:"Liquido startpage"},
+		{ id: "ideasTable", value: "All Ideas", icon: "lightbulb-o", details: "All Ideas"},
 	]},
-	{id: "components", open: true, value:"Components", data:[
-		{ id: "datatables", value: "Datatables", icon: "table", details: "datatable examples" },
-		{ id: "charts", value: "Charts", icon: "bar-chart-o", details: "charts examples"},
-		{ id: "forms", value: "Forms", icon: "list-alt", details: "forms examples"}
-
+	{id: "userItems", open: true, value:"Your Items", data:[
+		{ id: "userIdeas", value: "Your Ideas", icon: "lightbulb-o", details: "Ideas created by you" },
+		{ id: "userProposals", value: "Your Proposals", icon: "commenting-o", details: "Your proposals that reached their quorum"},
+		{ id: "userPolls", value: "Your Polls", icon: "check-square-o", details: "Polls with proposals by you"}
 	]},
-	/*
-	{id: "uis", value:"UI Examples", open:1, data:[
-		{ id: "calendar", value: "My Calendar", icon: "calendar", details: "calendar example" },
-		{ id: "files", value: "File Manager", icon: "folder-open-o", details: "file manager example" }
-
-	]}
-	*/
 ];
 
 export default class MenuView extends JetView{

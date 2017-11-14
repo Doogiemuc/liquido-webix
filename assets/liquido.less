@@ -8,6 +8,7 @@
   border-radius: 50%;
   width: 30px;
   height: 30px;
+  vertical-align: middle;
 }
 
 .nomargin {
@@ -26,6 +27,41 @@
 	overflow: hidden;
   }
 }
+
+
+/***** ideas table *****/
+
+.supportedByColumn>div {
+  padding: 0 1px;
+}
+
+.alreadySupported {
+  color: #0A0;
+  background: #DFD;
+  border: 1px solid #AFA;
+  border-radius: 3px;
+  display:inline-block;
+  line-height: 120%;
+  width: 35px;
+  text-align:center;
+  cursor: default;
+}
+
+.canSupport {
+  background: #DDD;
+  border: 1px solid #BBB;
+  border-radius: 3px;
+  display:inline-block;
+  line-height: 120%;
+  width: 35px;
+  text-align:center;
+  cursor: pointer;
+}
+
+.canSupport:hover {
+  background: #DED;
+}
+
 
 
 /***** list of recent ideas *****/

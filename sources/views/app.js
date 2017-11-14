@@ -1,10 +1,8 @@
 import {JetView} from "webix-jet";
-
-import search 	from "views/menus/search";
-import mail 	from "views/menus/mail";
-//import messagesPopup	from "views/menus/messagesPopup";
-import profile	from "views/menus/profile";
-import sidebar	from "views/menus/sidebar";
+import mail from "views/menus/mail";
+import messagesPopup from "views/menus/messagesPopup";
+import profile from "views/menus/profile";
+import sidebar from "views/menus/sidebar";
 import "views/webix/icon";
 import "views/webix/menutree";
 
@@ -16,7 +14,6 @@ export default class AppView extends JetView {
 		return layout;
 	}
 	init(view, url){
-		this.ui(search);
 		this.ui(mail);
 		//this.ui(messagesPopup);    //TODO: load messages after login
 		this.ui(profile);

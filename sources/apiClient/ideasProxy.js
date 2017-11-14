@@ -4,6 +4,7 @@
  */
  
 import conf from 'liquidoConfig'
+import replaceTokens from 'apiClient/apiHelper'
 
 /*
  * https://webix.com/snippet/8fd8d824
@@ -14,35 +15,69 @@ import conf from 'liquidoConfig'
  */
 export default {
 	$proxy:true,
+	$filter:0,     // 1-all, 2-created by current user, 3-supported by current user
 	
+	// set the global filter for loading ideas 
+	setFilter: function(filterId) {
+	  if (filterId < 0 || filterId > 2) throw new Error("FilterId must be between 0 and 2! You tried to set it to "+filterId)
+	  this.$filter = filterId
+	},
+	
+	/** 
+	 * load the given set of ideas
+	 * Webix.datatable sends the following values in the parameter "params":
+	 * - params.start - number of first record to load 
+   * - params.count - the number of records to fetch from that start position
+   * These values are then converted to page and size what the spring data PagingAndSortingRepository expects in the URL
+   * - page - the page to show
+   * - size - size if one page 
+	 */
 	load:function(view, callback, params) {
-		var url = conf.url.base + conf.url.ideas
-		params = webix.extend(params||{}, this.params||{}, true);
-		if(params && params.start !== undefined && params.count !== undefined) {   
-			//Webix params:
-			//  params.start - number of first record to load 
-			//  params.count - the number of records to fetch from that start position
-			//Spring Data Rest URL params
-			//  page - the page to show
-			//  size - page size 
-			
-			var page = Math.floor(params.start / params.count)
-			//console.log("requesting page", params.start, "/", params.count, "=", page)
-			url += "&page="+page+"&size="+params.count
-		}
-		if (params && params.sort) {
-			if (params.sort.id == "createdBy") {
-				url += "&sort=createdBy.profile.name," + params.sort.dir
-			} else {
-				url += "&sort="+params.sort.id + "," + params.sort.dir
-			}
-		}
+	  var url
+	  params = webix.extend(params||{}, this.params||{}, true);
+	  
+	  //---- load all ideas (with sorting and paging)
+	  if (this.$filter == 0) {
+  	  url = conf.url.base + conf.url.ideas
+  		if(params && params.start !== undefined && params.count !== undefined) {   
+  			var page = Math.floor(params.start / params.count)
+  			//console.log("requesting page", params.start, "/", params.count, "=", page)
+  			url += "&page="+page+"&size="+params.count
+  		}
+  		if (params && params.sort) {
+  			if (params.sort.id == "createdBy") {
+  				url += "&sort=createdBy.profile.name," + params.sort.dir
+  			} else {
+  				url += "&sort="+params.sort.id + "," + params.sort.dir
+  			}
+  		}
+  	} else
+  	//---- load ideas created by current user
+  	if (this.$filter == 1) {
+  	  console.log("loading ideas with filter 1", view)
+  	  var sessionService = view.$scope.app.getService("session");
+  	  console.log("user", sessionService.getUserURI())
+  	  url = conf.url.base + conf.url.findCreatedBy + "?status=IDEA&user=" + sessionService.getUserURI()
+  	  params.start = 0
+  	}else
+  	//---- load ideas supported by current user
+  	if (this.$filter == 2) {
+  	  
+  	}
+  	else
+  	{
+  	  console.log("ERROR: unknown filter: "+this.$filter)
+  	  return
+  	} 
+  	
+  	//----- send the actual HTTP request
 		webix.ajax().get(url).then(function(data){
-			console.log("GET ", url, "returned", data.json())
+		  var json = data.json()
+			console.log("GET ", url, "returned", json)
 		  var response = {
-				data: data.json()._embedded.laws,
+				data: json._embedded.laws,
 				pos: params.start || 0,
-				total_count: data.json().page.totalElements   // this is returned from the Spring Data PagingAndSortingRepository
+				total_count: json.page ? json.page.totalElements : json._embedded.laws.length   // page.totalElements is returned from the Spring Data PagingAndSortingRepository
 			}
 			webix.ajax.$callback(view, callback, response);
 		}).catch(err => {
@@ -56,7 +91,17 @@ export default {
 	
 	update: function(ideaData) {
 	  console.log("ideaProxy.update", ideaData)
-	}
+	},
+	
+	addCurrentUserAsSupporter: function(view, ideaId) {
+	  var sessionService = view.$scope.app.getService("session");
+	  var userURI = sessionService.getUserURI()
+  	//console.log("User", userURI, "supports idea", ideaId)
+	  var url = conf.url.base + replaceTokens(conf.url.lawSupporters, {lawId: ideaId})
+	  return webix.ajax().headers({"Content-Type":"text/uri-list"}).post(url, userURI)
+	    .then (res => { console.log("<= OK, added supporter", userURI, "to idea", ideaId) })
+	    .catch(err => { console.log("ERROR: cannot addCurrentUserAsSupporter!", err) })
+	} 
 };
 
 

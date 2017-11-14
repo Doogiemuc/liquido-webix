@@ -43,6 +43,7 @@ var ideaDescriptionEditor = {
   invalidMessage: "You must supply a description!",
   bottomPadding: 25, // add some space below to show invalid message
   barHeight: 37,    // the webix.ui.view needs this, because we are hiding the TinyMCE-menubar
+  borderless: true,
   config: {
     menubar: false,
     plugins: [
@@ -75,8 +76,9 @@ var saveIdea = function(data) {
 
 // the main webix form
 var layout = {
+  type: "space",
   rows: [
-    { view: "template", template: "Add a new idea", type: "header" },
+    { view: "template", template: '<i class="fa fa-lightbulb-o"></i> Add a new idea', type: "header" },
     {
     	view: "form",
     	id:   "ideaForm",

@@ -35,7 +35,7 @@ webix.ready(function(){
 	
 	//----- Init session management
 	app.use(sessionMgmtPlugin, { 
-		findByEMailUrl: conf.url.base + conf.url.findByEmail
+		findUserByEMailUrl: conf.url.base + conf.url.findUserByEmail
 	})
 	
 	//----- Automatically login a dummy user if configured from webpack env

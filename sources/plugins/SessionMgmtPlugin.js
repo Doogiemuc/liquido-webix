@@ -9,9 +9,7 @@ export default function SessionMgmtPlugin(app, view, config) {
 		const afterLogin = config.afterLogin || app.config.start;
 		const afterLogout = config.afterLogout || "/login";
 		const ping = 0;  // config.ping || 5 * 60 * 1000;
-		const findByEMailUrl = config.findByEMailUrl || "/users/search/findByEMail?email="
-		//const model = config.model;
-		
+		const findUserByEMailUrl = config.findUserByEMailUrl || "/users/search/findByEMail?email="
 		
 		let user = null
 		let userEMail = null
@@ -22,6 +20,10 @@ export default function SessionMgmtPlugin(app, view, config) {
 				/** @return the user data as JSON loaded from server. MAY RETURN NULL if user is not logged in! */
 				getUser() {
 					return user;
+				},
+				
+				getUserURI() {
+				  return user._links.self.href;
 				},
 				
 				/** @return true if user is currently logged in */
@@ -39,9 +41,9 @@ export default function SessionMgmtPlugin(app, view, config) {
 					accessToken = 'Basic ' + btoa(email + ':' + password)   // btoa - base64 encoding
 					this.attachOnBeforeAjaxEvent(accessToken)
 					//----- Load detailed user JSON from backend
-					return webix.ajax(findByEMailUrl, {"email": email}).then(function(data) {
+					return webix.ajax(findUserByEMailUrl, {"email": email}).then(function(data) {
 						if (!data) {
-							console.log("cannot get user information. got empty data.")
+							console.log("ERROR: Cannot load user information. Got empty data. Access denied?")
 							throw ("Access denied")
 						}
 						user = data.json()
@@ -65,7 +67,7 @@ export default function SessionMgmtPlugin(app, view, config) {
 				attachOnBeforeAjaxEvent(accessToken) {
 					//console.log("attach onBeforeAjasEvent", userEMail, this)
 					onBeforeAjaxEvent = webix.attachEvent("onBeforeAjax", function (mode, url, data, request, headers) {
-						console.log("=>", mode, url, userEMail)
+						console.log("=>", mode, url, data, userEMail)
 						headers["Accept"] = "application/hal+json";
 						if (undefined === headers["Authorization"]) {
 							//console.log("adding access token to request", url)
