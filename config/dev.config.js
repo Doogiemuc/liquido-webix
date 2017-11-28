@@ -1,10 +1,12 @@
 module.exports = {
 	env: "DEV",
 	url: {
-		base: "http://localhost:8080/liquido/v2",    							// this CAN be rerouted with an alias in webpack.config.js
-		ping: "/_ping",
+		base:  "http://localhost:8080/liquido/v2",    							// this CAN be rerouted with an alias in webpack.config.js
+		ping:  "/_ping",
 		areas: "/areas",
-		ideas: "/laws/search/findByStatus?status=IDEA",
+		ideas: "/laws",    // with status=IDEA
+		laws:  "/laws",
+		findIdeas: "/laws/search/findByStatus?status=IDEA",
 		lawSupporters: "/laws/{{lawId}}/supporters",
 		findCreatedBy: "/laws/search/findCreatedBy",              // ?status=PROPOSAL&user=user/1
 		findSupportedBy: "/laws/search/findSupportedBy",   				// ?status=PROPOSAL&user=user/1

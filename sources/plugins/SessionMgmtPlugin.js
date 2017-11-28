@@ -6,8 +6,8 @@ export default function SessionMgmtPlugin(app, view, config) {
 		config = config || {};
 		const login = config.login || "/login";
 		const logout = config.logout || "/logout";
-		const afterLogin = config.afterLogin || app.config.start;
-		const afterLogout = config.afterLogout || "/login";
+		//const afterLogin = config.afterLogin || app.config.start;
+		//const afterLogout = config.afterLogout || "/login";
 		const ping = 0;  // config.ping || 5 * 60 * 1000;
 		const findUserByEMailUrl = config.findUserByEMailUrl || "/users/search/findByEMail?email="
 		
@@ -32,42 +32,67 @@ export default function SessionMgmtPlugin(app, view, config) {
 				},
 				
 				/** 
-				 * login a user with its username and password 
-				 * @return a Promise that will resolve to the detailed user data JSON
+				 * Login a user with its username(email) and password.
+				 * Will call the backend to validate this user.
+				 * @return A Promise that will resolve to the detailed user data JSON
+				 *         or a rejected Promise with an error message.
 				 */
 				login(email, password) {
-					console.log("Login "+email, this)
+					console.log("SessionService.login(email="+email+")")
 					userEMail = email 
 					accessToken = 'Basic ' + btoa(email + ':' + password)   // btoa - base64 encoding
-					this.attachOnBeforeAjaxEvent(accessToken)
-					//----- Load detailed user JSON from backend
-					return webix.ajax(findUserByEMailUrl, {"email": email}).then(function(data) {
+					
+					this.attachOnBeforeAjaxEvent(accessToken)               // authenticate future requests  (Only works if password was right!)
+					//----- Load detailed user JSON from backend (if password was right)
+					return webix.ajax(findUserByEMailUrl, {"email": email})
+					.then(data => {
 						if (!data) {
 							console.log("ERROR: Cannot load user information. Got empty data. Access denied?")
 							throw ("Access denied")
 						}
-						user = data.json()
-						//app.show(afterLogin);						
-						return data.json()
-					}).catch(err => {
-						// wrong email will lead to 404 from server
-						console.log("Cannot find user with e-mail "+email)
+						user = data.json()					
+						webix.callEvent("onAfterLogin", user)
+						return user
+					})
+					.catch(err => {
+					  var errMsg
+					  if (err.status == 401) {
+					    errMsg = "Wrong password. Access denied."
+					  } else if (err.status == 404) {
+					    errMsg = "Cannot find user with email "+email
+					  }
+						console.log(errMsg)
+						return Promise.reject(errMsg)
 					})
 				},
 				
 				/** logout current user */
 				logout() {
+				  console.log("SessionService.logout()")
 					user = null;
-					userEMail = null;+
-					console.log("removing onBeforeAjaxEvent" , onBeforeAjaxEvent)
-					webix.removeEvent(onBeforeAjaxEvent)
+					userEMail = null;
+					accessToken = null;
+					if (onBeforeAjaxEvent != null) {
+  					console.log("detaching onBeforeAjax event", onBeforeAjaxEvent)
+  					webix.detachEvent(onBeforeAjaxEvent)
+  				}
+  				webix.callEvent('onAfterLogout')
 				}, 
 				
-				/** add the authorisatino header to all outgoing AJAX requests */
+				/** add the authorisation header to all outgoing AJAX requests */
 				attachOnBeforeAjaxEvent(accessToken) {
-					//console.log("attach onBeforeAjasEvent", userEMail, this)
+					if (onBeforeAjaxEvent != null) {
+					  console.log("replacing onBeforeAjax event", userEMail)
+					  webix.detachEvent(onBeforeAjaxEvent)
+					} else {
+					  console.log("attaching new onBeforeAjax event", userEMail)
+					}
 					onBeforeAjaxEvent = webix.attachEvent("onBeforeAjax", function (mode, url, data, request, headers) {
-						console.log("=>", mode, url, data, userEMail)
+						if (data) {
+						  console.log("=> ", mode, url, data, userEMail)
+						} else {
+						  console.log("=> ", mode, url, userEMail)
+						}
 						headers["Accept"] = "application/hal+json";
 						if (undefined === headers["Authorization"]) {
 							//console.log("adding access token to request", url)
@@ -78,8 +103,15 @@ export default function SessionMgmtPlugin(app, view, config) {
 				
 		};
 		
-				
+		console.log("Registering session management service")
+		app.setService("session", service);
 		
+		webix.attachEvent('doLogout', function() {
+		  console.log("Event: doLogout")
+		  service.logout()
+		})
+				
+		/*    TODO:   protect internap pages, that can only be seen when logged in
 		function canNavigate(url, obj) {
 				if (url === logout) {
 						service.logout();
@@ -89,11 +121,7 @@ export default function SessionMgmtPlugin(app, view, config) {
 						obj.redirect = login;
 				}
 		}
-		
-		console.log("registering session management service")
-		app.setService("session", service);
-		
-		/*
+
 		app.attachEvent(`app:guard`, function (url, _$root, obj) {
 				if (typeof user === "undefined")
 						obj.confirm = service.getStatus(true).then(any => canNavigate(url, obj));

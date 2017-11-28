@@ -1,34 +1,26 @@
-Example of Webix MVC Admin App
-===============================
+Web frontend for Liquido made with Webix
+========================================
 
-Live demos
-----------
-
-- Flat skin - http://webix.com/demos/admin-app/
-- Material skin - http://webix.com/demos/material/admin-app/
-
-Jet 0.x
-----------
-Demo in this repo is created with Webix Jet 1.x, if you want to check older version, use
-
-- Flat skin - https://github.com/webix-hub/webix-adminapp-demo/tree/jet0
-- Material skin - https://github.com/webix-hub/webix-adminapp-demo/tree/material-jet0
-
+This is my HTML web frontend for my Liquid Democracy Voting and Decision Making framework "Liquido". 
+This frontend uses www.liquido.com as UI Library. And it communicates with the liquido backend
+via a REST interface.
 
 Technical details
 ------------------
 
-### Run
+The frontend is built uppon the webix jet micro app framework.
 
-- clone repo from git
-- run `npm install`
-- run `npm start`
-- open `http://localhost:8080` in a browser 
+### Run & Test
 
-### Deploy
+- `npm install` installs all necessary nodeJS modules
+- `npm run dev` starts the frontend app
+- The backend must be running!
+- Then you can open `http://localhost:8080` in a browser
 
-- run `npm run build`
-- copy "index.html" and "codebase" folder to the server
+### Build & Deploy
+
+- `npm run build` wil create .js and .css files for production in folder "./codebase"
+- copy "index.html" and "./codebase" folder to the server
 
 ### Other gulp commands
 
@@ -38,9 +30,5 @@ Technical details
 License
 ---------
 
-All code in this repo is available under the MIT License
-
-Demo uses some external libs, which have different licenses
-
-- [dhtmlxScheduler](http://dhtmlx.com/docs/products/dhtmlxScheduler/) is available under GPL license
+All code in this repo created by me is available under the Apache 2.0 Open Source License
 

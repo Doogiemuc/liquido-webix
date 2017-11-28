@@ -68,7 +68,7 @@ var saveIdea = function(data) {
       area:  ideaAreaId,
       description: ideaDescription
     }
-    console.log("newIdea", newIdea)
+    ideasProxy.create(newIdea)
   } else {
     console.log("form is not valid")
   }
@@ -96,7 +96,7 @@ var layout = {
     	],
   	  on: {
         onAfterValidation(result, value) {
-          console.log("form.onAfterValidation", result, value)
+          //console.log("form.onAfterValidation", result, value)
         }
       }
 		}

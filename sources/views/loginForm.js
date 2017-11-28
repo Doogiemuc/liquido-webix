@@ -12,9 +12,8 @@ export default class LoginView extends JetView {
 	}
 	
 	init(view) {
-		console.log("init view", $$('email'))
+		//console.log("init view", $$('loginForm').elements.email)
 		$$('email').focus()
-		//$$('loginForm').focus('email')
 	}
 	
 	validateForm() {
@@ -52,26 +51,48 @@ const loginForm = {
 			}}
 		},
 		{ view: "text", type: "password", label: "Password", name: "password", 
-		  required: true, invalidMessage: "Please enter your password!",  // validateEvent: "blur",
-			on: { "onBlur": function() { 
-				console.log("Validating password", this); 
-				this.validate() 
-				this.$scope.validateForm()
-			}}
+		  required: true, validate: webix.rules.isNotEmpty, invalidMessage: "Please enter your password!", validateEvent: "key",
+			on: { 
+  			"onBlur": function() {
+  				console.log("Validating password"); 
+  				this.validate() 
+  				this.$scope.validateForm()
+  			},
+  			/*
+  			"onKeyPress": function() {
+  			  console.log("Validating password"); 
+  				this.validate() 
+  				//this.$scope.validateForm()
+  			}
+  			*/
+  		}
+  		
 		},
 		{
 			margin: 10,
 			paddingX: 2,
 			borderless: true,
 			cols:[
+			  { view: "button", label: "LOGIN_DEFAULT_USER", click: function() {
+			    $$('loginForm').setValues({email: "testuser1@liquido.de", password: "dummyPasswordHash"})
+			    this.$scope.validateForm()
+			  }},
 				{},
 				{ view: "button", label: "Login", type: "form", id:"loginFormSubmitButton", width: 150, click: 
 					function() {
 						var form = $$('loginForm')
-						if (form.validate()){
-							webix.alert("Login of user " + form.elements.email.getValue())
+						if (form.validate()) {
+						  var email = form.elements.email.getValue()
+						  var pass  = form.elements.password.getValue()
+						  this.$scope.app.getService("session").login(email, pass)
+					    .then((user) => {
+					      webix.alert({title:"Login successfull", type:"alert-success", text:"Welcome "+user.profile.name})
+					      this.$scope.app.show("/app/start");	   //TODO: navigato to /app/userHome  after successfull login
+					    })
+					    .catch((err) => {
+					      webix.alert({title:"Cannot login!", type:"alert-warning", text:err})
+					    })
 							
-							//TODO: https://spring.io/guides/tutorials/spring-boot-oauth2/    :-(   ***biiiiggg****
 						}
 					}
 				}
@@ -101,3 +122,6 @@ const centeredLoginForm = {
 		{}
 	]
 };
+
+
+//TODO: https://spring.io/guides/tutorials/spring-boot-oauth2/    :-(   ***biiiiggg****

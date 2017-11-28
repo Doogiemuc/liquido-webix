@@ -47,7 +47,7 @@ export default {
 			},
 			{},
 			{ view: "template", autoheight: true, template: 
-				`Please support our team. We are eagerly lookign for server space.
+				`Please support our team and spread the word.
 				<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" style="float: right; color:grey">
 				  <img alt="Creative Commons License" class="opaqueImg" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png">
 				</a>` 

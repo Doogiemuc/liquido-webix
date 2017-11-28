@@ -1,6 +1,6 @@
 /**
  * Proxy that loads ideas from the backend
- * Handles paging and sorting.
+ * Also handles paging and sorting.
  */
  
 import conf from 'liquidoConfig'
@@ -38,7 +38,7 @@ export default {
 	  
 	  //---- load all ideas (with sorting and paging)
 	  if (this.$filter == 0) {
-  	  url = conf.url.base + conf.url.ideas
+  	  url = conf.url.base + conf.url.findIdeas
   		if(params && params.start !== undefined && params.count !== undefined) {   
   			var page = Math.floor(params.start / params.count)
   			//console.log("requesting page", params.start, "/", params.count, "=", page)
@@ -54,7 +54,7 @@ export default {
   	} else
   	//---- load ideas created by current user
   	if (this.$filter == 1) {
-  	  console.log("loading ideas with filter 1", view)
+  	  console.log("loading ideas with filter 1(=created by current user)", view)
   	  var sessionService = view.$scope.app.getService("session");
   	  console.log("user", sessionService.getUserURI())
   	  url = conf.url.base + conf.url.findCreatedBy + "?status=IDEA&user=" + sessionService.getUserURI()
@@ -70,10 +70,10 @@ export default {
   	  return
   	} 
   	
-  	//----- send the actual HTTP request
+  	//----- send HTTP request
 		webix.ajax().get(url).then(function(data){
 		  var json = data.json()
-			console.log("GET ", url, "returned", json)
+			console.log("<= GET ", url, "returned", json)
 		  var response = {
 				data: json._embedded.laws,
 				pos: params.start || 0,
@@ -85,14 +85,24 @@ export default {
 		})
 	},
 	
-	save: function(newIdeaData) {
-	  console.log("ideaProxy.save", newIdeaData)
+	save: function(updatedIdea) {
+	  console.log("ideaProxy.save", updatedIdea)
 	},
 	
-	update: function(ideaData) {
-	  console.log("ideaProxy.update", ideaData)
+	create: function(newIdea) {
+	  var url = conf.url.base + conf.url.ideas
+	  //newIdea.status = "IDEA"
+	  console.log("Creating new idea", newIdea)
+	  return webix.ajax().headers({"Content-Type": "application/json"}).post(url, newIdea)
+	    .then (res => { console.log("<= OK, created new idea", res.json()) })
+	    .catch(err => { console.log("ERROR: cannot create new idea!", err) })
 	},
 	
+	/** 
+	 * add the currently logged in user as a supporter to an idea
+	 * - view - the calling table view
+	 * - ideaId - id of the idea on the server (will become part of the URL that we post to)
+	 */
 	addCurrentUserAsSupporter: function(view, ideaId) {
 	  var sessionService = view.$scope.app.getService("session");
 	  var userURI = sessionService.getUserURI()

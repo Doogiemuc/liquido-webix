@@ -39,21 +39,12 @@ webix.ready(function(){
 	})
 	
 	//----- Automatically login a dummy user if configured from webpack env
+	/*
 	if (AUTOLOGIN) {
+	  console.log("=== DEV mode ===> AUTOLOGIN "+conf.defaultUser)
 	  app.getService("session").login(conf.defaultUser, conf.defaultPass)		
 	}
+	*/
 	
 	app.render();  // mandatory !!
 });
-
-/*
-//track js errors
-if (PRODUCTION){
-	window.Raven
-		.config(
-			"https://59d0634de9704b61ba83823ec3bf4787@sentry.webix.io/12",
-			{ release: VERSION }
-		)
-		.install();
-}
-*/
