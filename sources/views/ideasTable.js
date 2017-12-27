@@ -1,6 +1,8 @@
 import {JetView} from "webix-jet";
 import ideasProxy from "apiClient/ideasProxy";
 
+var user
+
 /** A full width table with a list of ideas */
 export default class IdeasView extends JetView {
 	config() {
@@ -12,6 +14,9 @@ export default class IdeasView extends JetView {
 		//view.queryView({ view:"datatable" }).load(ideasProxy);
 		view.queryView({ view:"datatable" }).loadNext(20, 0, null, ideasProxy);  //   (count, start, <callback>, url/proxy)
 		//this._form = this.ui(orderform);
+		
+		user = this.app.getService('session').getUser()
+		console.log("User", user)
 	}
 	
 	setTableFilter(filterId) {
@@ -53,7 +58,9 @@ var parseIsoDate = function(iso8601dateStr) {
 //Snippet Example for buttons https://webix.com/snippet/a5f8b3e3
 /** Number of supporters, in green if supported by current user */
 var supportedBy = function (obj, common, value) {
-  if (obj.supportedByCurrentUser)
+  if (obj.createdBy.email == user.email)
+    return "<div class='ownIdea'>"+obj.numSupporters+"</div>";
+  else if (obj.supportedByCurrentUser)   
     return "<div class='alreadySupported'>"+obj.numSupporters+"</div>";
   else
     return "<div class='canSupport'>"+obj.numSupporters+"</div>";

@@ -47,4 +47,6 @@ webix.ready(function(){
 	*/
 	
 	app.render();  // mandatory !!
+	
+	console.log("LIQUIDO started in", conf.env)
 });

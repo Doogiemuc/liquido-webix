@@ -23,6 +23,7 @@ export default class AppView extends JetView {
 		//$$('scrollviewId').adjust();  // must update the scrollview to make it adjust to its container
 		
 		webix.attachEvent('onAfterLogin', (user) => {
+		  //console.log("event:onAfterLogin")
 		  this.showUserProfile()  
 		})
 		

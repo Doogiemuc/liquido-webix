@@ -74,8 +74,10 @@ const loginForm = {
 			borderless: true,
 			cols:[
 			  { view: "button", label: "LOGIN_DEFAULT_USER", click: function() {
-			    $$('loginForm').setValues({email: "testuser1@liquido.de", password: "dummyPasswordHash"})
-			    this.$scope.validateForm()
+			    //$$('loginForm').setValues({email: "testuser1@liquido.de", password: "dummyPasswordHash"})
+			    //this.$scope.validateForm()
+			    this.$scope.app.getService("session").login("testuser1@liquido.de", "dummyPasswordHash")
+			    this.$scope.app.show("/app/start");    
 			  }},
 				{},
 				{ view: "button", label: "Login", type: "form", id:"loginFormSubmitButton", width: 150, click: 

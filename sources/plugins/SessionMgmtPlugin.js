@@ -1,6 +1,7 @@
 /**
- * Webix Plugin that handels session management on the client 
- * Holds the information about the currently logged in user
+ * Webix Plugin that handels session management on the client.
+ * Holds the information about the currently logged in user.
+ * USer information is exposed as a global webix service that can be accessed from anywhere.
  */
 export default function SessionMgmtPlugin(app, view, config) {
 		config = config || {};
@@ -60,6 +61,8 @@ export default function SessionMgmtPlugin(app, view, config) {
 					    errMsg = "Wrong password. Access denied."
 					  } else if (err.status == 404) {
 					    errMsg = "Cannot find user with email "+email
+					  } else {
+					    errMsg = err
 					  }
 						console.log(errMsg)
 						return Promise.reject(errMsg)
@@ -77,6 +80,7 @@ export default function SessionMgmtPlugin(app, view, config) {
   					webix.detachEvent(onBeforeAjaxEvent)
   				}
   				webix.callEvent('onAfterLogout')
+  				app.show(app.config.start)          // Always navigate to start page after logout
 				}, 
 				
 				/** add the authorisation header to all outgoing AJAX requests */
@@ -89,9 +93,9 @@ export default function SessionMgmtPlugin(app, view, config) {
 					}
 					onBeforeAjaxEvent = webix.attachEvent("onBeforeAjax", function (mode, url, data, request, headers) {
 						if (data) {
-						  console.log("=> ", mode, url, data, userEMail)
+						  console.log("=>", mode, url, data, userEMail)
 						} else {
-						  console.log("=> ", mode, url, userEMail)
+						  console.log("=>", mode, url, userEMail)
 						}
 						headers["Accept"] = "application/hal+json";
 						if (undefined === headers["Authorization"]) {

@@ -1,27 +1,19 @@
 [Open Files]
 Active File Display Mode=1
-Active File Index=2
-Open File Line0=0
-Open File Line1=0
-Open File Line2=2684
-Open File Line3=0
-Open File Line4=0
-Open File Pos0=506
-Open File Pos1=409
-Open File Pos2=3556
-Open File Pos3=850
-Open File Pos4=1040
-Open File Window Pos0=0,1,-1,-1,-1,-1,5,27,1621,886
-Open File Window Pos1=0,1,-1,-1,-1,-1,5,27,1621,886
-Open File Window Pos2=0,1,-1,-1,-1,-1,5,27,1621,886
-Open File Window Pos3=0,1,-1,-1,-1,-1,5,27,1621,886
-Open File Window Pos4=0,1,-1,-1,-1,-1,5,27,1621,886
-Open File0=C:\Doogie\Coding\WebDev\liquido-webix\sources\liquido.js
-Open File1=C:\Doogie\Coding\WebDev\liquido-webix\sources\views\app.js
-Open File2=C:\Doogie\Coding\WebDev\liquido-webix\sources\plugins\SessionMgmtPlugin.js
-Open File3=C:\Doogie\Coding\WebDev\liquido-webix\sources\views\loginForm.js
-Open File4=C:\Doogie\Coding\WebDev\liquido-webix\sources\views\menus\profilePopup.js
-Open File5=
+Active File Index=0
+Open File Line0=1697
+Open File Line1=24464
+Open File Line2=10564
+Open File Pos0=2676
+Open File Pos1=27656
+Open File Pos2=13404
+Open File Window Pos0=0,1,-1,-1,-1,-1,5,27,1915,886
+Open File Window Pos1=0,1,-1,-1,-1,-1,5,27,1915,886
+Open File Window Pos2=0,1,-1,-1,-1,-1,5,27,1915,886
+Open File0=C:\FG-230\Coding\git-repos\req-mapping-sankey\req_mapping_sankey_v3.html
+Open File1=C:\FG-230\Coding\git-repos\req-mapping-sankey\requirements.js
+Open File2=C:\FG-230\Coding\git-repos\req-mapping-sankey\devTickets.js
+Open File3=
 Remember Files=1
 
 [Project Information]
@@ -29,9 +21,12 @@ Remember Files=1
 
 [Folders]
 	.\=1
-	.\ - codebase=1
-	.\ - config=1
 	.\ - sources=1
 	.\ - sources - views=1
 	.\ - test - mockdata=1
-
+	.\ - sources - views - panels=1
+	.\ - sources - plugins=1
+	.\ - assets - imgs - photos=1
+	.\ - sources - views - menus=1
+	.\ - sources - views - modules=1
+	.\ - assets=1
