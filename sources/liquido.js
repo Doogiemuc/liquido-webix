@@ -28,7 +28,8 @@ webix.ready(function(){
 	});
 	
 	//----- Check we can reach our backend
-	webix.ajax(conf.url.base + conf.url.ping).catch(err => {
+	console.log("Checking for backend at "+conf.url.base + conf.url.ping)
+  	webix.ajax(conf.url.base + conf.url.ping).catch(err => {
 		console.log("Backend ist not available at "+conf.url.base)
 		webix.alert({title: "Warning", text: "Backend is not reachable at <pre>"+conf.url.base+"</pre>", type: "alert-error", width: 400})
 	})
@@ -39,14 +40,12 @@ webix.ready(function(){
 	})
 	
 	//----- Automatically login a dummy user if configured from webpack env
-	/*
 	if (AUTOLOGIN) {
-	  console.log("=== DEV mode ===> AUTOLOGIN "+conf.defaultUser)
+	  console.log("===> AUTOLOGIN "+conf.defaultUser)
 	  app.getService("session").login(conf.defaultUser, conf.defaultPass)		
 	}
-	*/
 	
 	app.render();  // mandatory !!
 	
-	console.log("LIQUIDO started in", conf.env)
+	console.log("LIQUIDO started. env=", conf.env)
 });

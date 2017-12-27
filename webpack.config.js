@@ -4,7 +4,7 @@ var webpack = require("webpack");
 module.exports = function(env) {
 	var pack = require("./package.json");
 	var ExtractTextPlugin = require("extract-text-webpack-plugin");
-	var autologin = !!(env && (env.NODE_ENV === "DEV" || env.NODE_ENV === "MOCK"));
+	var autologin = !!(env && (env.NODE_ENV === "DEV"));			// automatically login a default use in DEV mode
 	var babelSettings = {
 		extends: path.join(__dirname, '/.babelrc')
 	};
@@ -67,12 +67,15 @@ module.exports = function(env) {
 	if (env.NODE_ENV === "DEV") {
 		config.resolve.alias.liquidoConfig = path.resolve(__dirname, "config/dev.config.js")
 		var conf = require(config.resolve.alias.liquidoConfig)
-		console.log("====== Development mode with real backend at "+conf.url.base)
+		console.log("====== Development mode with backend at "+conf.url.base)
 	} 
 	else 
 	if (env.NODE_ENV === "MOCK") {
-	  config.resolve.alias.liquidoConfig = path.resolve(__dirname, "config/dev.config.js")
-    var backendBaseURL = 'http://localhost:4444'
+		config.resolve.alias.liquidoConfig = path.resolve(__dirname, "config/mock.config.js")
+		var conf = require(config.resolve.alias.liquidoConfig)
+		console.log("====== Development mode with MOCK backend at "+conf.url.base)
+		/*  Re-route requests to backend API via devServer. This is necessary, because otherwise run into the famouse CORS hell :-)
+    	var backendBaseURL = 'http://localhost:4444'
 		console.log("====== Development mode with mocked backend at "+backendBaseURL)
 		config.devServer.proxy = {
 			'/liquido/v2': {
@@ -80,13 +83,13 @@ module.exports = function(env) {
 				secure: false
 			}
 		}
-		
+		*/		
 	}
 	else 
 	if (env.NODE_ENV === "PROD") {
 		console.log("======= PRODUCTION BUILD")
 		config.resolve.alias.liquidoConfig = path.resolve(__dirname, "config/prod.config.js")
-	  config.plugins.push(
+		config.plugins.push(
 			new  webpack.optimize.UglifyJsPlugin({
 				test: /\.js$/
 			})

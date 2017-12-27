@@ -21,6 +21,7 @@ var port = 4444
 exports.startHttpServer = function() {
 	httpServer = http.createServer(function (req, res) {
 		log.debug("=> MockLiquidoBackend: ", req.method, req.url, req.headers["Authorization"]);
+		res.setHeader("Access-Control-Allow-Origin", "*");		// allow all CORS requests from everywhere
 		RouteManager.findRoute(req,res);
 	});
 	httpServer.on('error',function(err){
