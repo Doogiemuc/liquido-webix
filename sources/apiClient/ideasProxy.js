@@ -1,6 +1,10 @@
 /**
- * Proxy that loads ideas from the backend
- * Also handles paging and sorting.
+ * This is a webix proxy for the webix.datatable that shows ideas.
+ * This oject is also the adapter between the JSON dataformat that webix.datatable requires
+ * and the JSON that spring-data-rest returns.
+ *
+ * This class also handles paging and dynamic loading. Therefore the datatable "params" need to be converted 
+ * to url params that spring-data-rast PagingAndSortingRepository expects.
  */
  
 import conf from 'liquidoConfig'
@@ -17,20 +21,25 @@ export default {
 	$proxy:true,
 	$filter:0,     // 1-all, 2-created by current user, 3-supported by current user
 	
-	// set the global filter for loading ideas 
+	/** 
+	 * Set a global filter for loading ideas 
+	 * Actually not such a nice design, but necessary for using dymaic loading feature of webix.datatable
+	 */
 	setFilter: function(filterId) {
 	  if (filterId < 0 || filterId > 2) throw new Error("FilterId must be between 0 and 2! You tried to set it to "+filterId)
 	  this.$filter = filterId
 	},
 	
 	/** 
-	 * load the given set of ideas
-	 * Webix.datatable sends the following values in the parameter "params":
+	 * Load ideas according to currently set filter
+	 *
+	 * Webix.datatable sends the following values in "params":
 	 * - params.start - number of first record to load 
    * - params.count - the number of records to fetch from that start position
+   *
    * These values are then converted to page and size what the spring data PagingAndSortingRepository expects in the URL
    * - page - the page to show
-   * - size - size if one page 
+   * - size - size of one page 
 	 */
 	load: function(view, callback, params) {
 	  var url
@@ -38,56 +47,72 @@ export default {
 	  
 	  //---- load all ideas (with sorting and paging)
 	  if (this.$filter == 0) {
-	  	console.log("loading all ideas filter=0 (with paging)");
-  	  url = conf.url.base + conf.url.findIdeas
-  		if(params && params.start !== undefined && params.count !== undefined) {   
-  			var page = Math.floor(params.start / params.count)
-  			//console.log("requesting page", params.start, "/", params.count, "=", page)
-  			url += "&page="+page+"&size="+params.count
-  		}
-  		if (params && params.sort) {
-  			if (params.sort.id == "createdBy") {
-  				url += "&sort=createdBy.profile.name," + params.sort.dir
-  			} else {
-  				url += "&sort="+params.sort.id + "," + params.sort.dir
-  			}
-  		}
+	  	this.loadAllIdeas(view, callback, params)
   	} else
   	//---- load ideas created by current user
   	if (this.$filter == 1) {
-  	  console.log("loading ideas: filter 1(=created by current user)")
-  	  var sessionService = view.$scope.app.getService("session");
-  	  console.log("user", sessionService.getUserURI())
-  	  url = conf.url.base + conf.url.findCreatedBy + "?status=IDEA&user=" + sessionService.getUserURI()
-  	  params.start = 0   // necessary for webix datatable
-  	}else
+  	   this.loadIdeasCreatedByCurrentUser(view, callback, params)
+  	} else
   	//---- load ideas supported by current user
   	if (this.$filter == 2) {
-  	  console.log("loading ideas: filter 2(=supported by current user)")
-  	  var sessionService = view.$scope.app.getService("session");
-  	  url = conf.url.base + conf.url.findSupportedBy + "?status=IDEA&user=" + sessionService.getUserURI()
-  	  params.start = 0
-  	}
-  	else
-  	{
+  	  this.loadIdeasSupportedByCurrentUser(view, callback, params)
+  	} else {
   	  console.log("ERROR: unknown filter: "+this.$filter)
-  	  return
   	} 
-  	
-  	//----- send HTTP request
+	},
+
+	loadAllIdeas: function(view, callback, params) {
+		console.log("loading all ideas filter=0 (with paging)");
+	  var url = conf.url.base + conf.url.findIdeas
+		if(params && params.start !== undefined && params.count !== undefined) {   
+			var page = Math.floor(params.start / params.count)
+			//console.log("requesting page", params.start, "/", params.count, "=", page)
+			url += "&page="+page+"&size="+params.count
+		}
+		if (params && params.sort) {
+			if (params.sort.id == "createdBy") {
+				url += "&sort=createdBy.profile.name," + params.sort.dir
+			} else {
+				url += "&sort="+params.sort.id + "," + params.sort.dir
+			}
+		}
+		this.sendAjaxRequest(view, callback, params, url)
+	},
+
+	loadIdeasCreatedByCurrentUser(view, callback, params) {
+ 		console.log("loading ideas: filter 1(=created by current user)")
+	  var sessionService = view.$scope.app.getService("session");
+	  console.log("user", sessionService.getUserURI())
+	  var url = conf.url.base + conf.url.findCreatedBy + "?status=IDEA&user=" + sessionService.getUserURI()
+	  this.sendAjaxRequest(view, callback, params, url)
+	},
+
+  loadIdeasSupportedByCurrentUser(view, callback, params) {
+		console.log("loading ideas: filter 2(=supported by current user)")
+	  var sessionService = view.$scope.app.getService("session");
+	  var url = conf.url.base + conf.url.findSupportedBy + "?status=IDEA&user=" + sessionService.getUserURI()
+	  this.sendAjaxRequest(view, callback, params, url)
+  },
+
+
+	sendAjaxRequest: function(view, callback, params, url) {
 		webix.ajax().get(url).then(function(data){
 		  var json = data.json()
 			console.log("<= GET ", url, "returned", json)
+			// How Webix datatable component handels dynamic loading: https://docs.webix.com/desktop__plain_dynamic_loading.html
 		  var response = {
 				data: json._embedded.laws,
-				pos: params.start || 0,
+				pos:  params.start || 0,
 				total_count: json.page ? json.page.totalElements : json._embedded.laws.length   // page.totalElements is returned from the Spring Data PagingAndSortingRepository
 			}
-			webix.ajax.$callback(view, callback, response);
+			webix.ajax.$callback(view, callback, response);   // call the callback with response data
 		}).catch(err => {
-			console.error("ERROR", err);
+			console.error("ERROR in ideasProxy", err);
 		})
 	},
+
+
+
 	
 	save: function(updatedIdea) {
 	  console.log("ideaProxy.save", updatedIdea)

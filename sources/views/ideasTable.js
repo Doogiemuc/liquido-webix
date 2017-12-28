@@ -19,6 +19,12 @@ export default class IdeasView extends JetView {
 		view.queryView({ view:"datatable" }).loadNext(20, 0, null, ideasProxy);  //   (count, start, <callback>, url/proxy)
 	}
 	
+	/**
+	 * Set filter for type of ideas: all, own or only supported ideas.
+	 * Setting the filter inside ideasProxy is actually not a clean MVC design.
+	 * But I need to, sonce webix.datatable dynamically calls ideasProxy.load method when scrolling.
+	 * This is very usefull for very large datasets.
+	 */
 	setTableFilter(filterId) {
 	  this.$$('localIdeaTableId').clearAll()
     ideasProxy.setFilter(filterId)
@@ -90,7 +96,7 @@ const grid = {
 	scrollX:false,
 	scrollY:true,
 	//pager:"ideasPager",
-	datafetch:20,              // https://docs.webix.com/desktop__plain_dynamic_loading.html
+	datafetch:20,              // How Webix datatable component handels dynamic loading: https://docs.webix.com/desktop__plain_dynamic_loading.html
 	loadahead:0,
 	
 	//datatype:"ideasData",
