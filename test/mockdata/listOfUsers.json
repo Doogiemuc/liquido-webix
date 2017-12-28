@@ -1,0 +1,30 @@
+{
+    "_embedded": {
+        "users": [
+            {
+                "createdAt": "2017-12-28T09:51:59.638+0000",
+                "updatedAt": "2017-12-28T09:51:59.638+0000",
+                "id": 17,
+                "email": "testuser16@liquido.de",
+                "profile": {
+                    "name": "Test User16",
+                    "website": "http://www.liquido.de",
+                    "picture": "/static/img/Avatar_32x32.jpeg"
+                },
+                "_links": {
+                    "self": {
+                        "href": "http://localhost:8080/liquido/v2/users/17"
+                    },
+                    "user": {
+                        "href": "http://localhost:8080/liquido/v2/users/17"
+                    }
+                }
+            }
+        ]
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/liquido/v2/laws/46/supporters"
+        }
+    }
+}

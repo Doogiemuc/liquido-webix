@@ -13,15 +13,23 @@ var loglevel = require("loglevel")
 var log = loglevel.getLogger("MockLiquidoBackend");
 log.setLevel("TRACE")
 
-var httpServer = null
+//----- parameters for HTTP server that will serve mock data
+var httpServer
 var hostname = 'localhost'
 var port = 4444
 
-// Start an HTTP server
+//----- base path that will be prefixed to all requests
+var apiBasePath  = '/liquido/v2'
+
+//----- path in the local filesystem to mockdata JSON files
+var mockDataPath = __dirname+'/../mockdata'
+
+//----- Start HTTP server
 exports.startHttpServer = function() {
 	httpServer = http.createServer(function (req, res) {
 		log.debug("=> MockLiquidoBackend: ", req.method, req.url, req.headers["Authorization"]);
 		res.setHeader("Access-Control-Allow-Origin", "*");		// allow all CORS requests from everywhere
+		res.setHeader("Access-Control-Allow-Headers", "Authorization");		// allow all headers. we need at least 'Authorisation'
 		RouteManager.findRoute(req,res);
 	});
 	httpServer.on('error',function(err){
@@ -37,8 +45,7 @@ exports.stopHttpServer = function() {
 	log.debug("Mock backend: http server stopped.")
 }
 
-var apiBasePath  = '/liquido/v2'
-var mockDataPath = __dirname+'/../mockdata'
+
 
 /**
  * Return a a curried function    https://medium.com/@kbrainwave/currying-in-javascript-ce6da2d324fe
@@ -91,6 +98,9 @@ var RouteManager ={
 			res.writeHead(200, {'Content-Type': 'text/plain'});
 			res.end("{\"Hello\":\"World\"}");
 		},
+
+		//----- search for a user => will always return testuser1@liquido.de  (used for login)
+		'/users/search/findByEmail\\?email=': sendFile('testUser1.json'),
 		
 		//----- get Number of votes a proxy may cast  => always return 5  for any userId and areaId
 		'/users/[a-f0-9]{24}/getNumVotes\\?areaId=[a-f0-9]{24}': function(req, res) {
@@ -109,9 +119,13 @@ var RouteManager ={
 		//----- search for ideas
 		'/laws/search/findByStatus\\?status=IDEA': sendFile('listOfIdeas.json'),
     
-	    //----- proposal that is supported by a user
-		'/laws/search/findSupportedBy\\?status=PROPOSAL&user=user/[0-9]+': sendFile('supportedByProposal.json')
+	  //----- proposal that is supported by a user
+		'/laws/search/findSupportedBy\\?status=PROPOSAL&user=user/[0-9]+': sendFile('supportedByProposal.json'),
+
+		//----- suporters for a law => will always return one supporter
+		'/laws/[0-9]/supporters': sendFile('listOfUser.json'),
 	
+
 		/*
 		"/json":function(req,res){
 			//this.sleep(5000);

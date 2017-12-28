@@ -32,7 +32,8 @@
     "less-loader": "^4.0.5",
     "url-loader": "^0.5.9",
     "webpack": "^3.6.0",
-    "webpack-dev-server": "^2.8.2"
+    "webpack-dev-server": "^2.8.2",
+    "webpack-merge": "^4.1.1"
   },
   "dependencies": {
     "loglevel": "^1.5.1",

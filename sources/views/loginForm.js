@@ -5,6 +5,7 @@
 //adapted from official Webix Jet login example at https://github.com/webix-hub/jet-start/blob/php/sources/views/login.js
 
 import {JetView} from "webix-jet";
+import conf from "liquidoConfig"
 
 export default class LoginView extends JetView {
 	config() {
@@ -12,8 +13,9 @@ export default class LoginView extends JetView {
 	}
 	
 	init(view) {
-		//console.log("init view", $$('loginForm').elements.email)
-		$$('email').focus()
+		console.log("trying to set focus")
+		//$$('email').focus()
+		$$('loginForm').focus('email')
 	}
 	
 	validateForm() {
@@ -24,7 +26,24 @@ export default class LoginView extends JetView {
 			$$('loginFormSubmitButton').disable()
 		}
 	}
+
+  /**
+   * call the session service to perform the actual login (REST call to backend)
+   */
+	doLogin(email, pass) {
+	  this.app.getService("session").login(email, pass)
+	  .then((user) => {
+	    webix.alert({title:"Login successfull", type:"alert-success", text:"Welcome "+user.profile.name})
+	    this.app.show("/app/start");	   //TODO: navigato to /app/userHome  after successfull login
+	  })
+	  .catch((err) => {
+	    webix.alert({title:"Cannot login!", type:"alert-warning", text:err})
+	  })
+	}
+
 }
+
+
 
 const loginForm = {
 	view: "form",
@@ -50,7 +69,7 @@ const loginForm = {
 				this.$scope.validateForm()
 			}}
 		},
-		{ view: "text", type: "password", label: "Password", name: "password", 
+		{ view: "text", type: "password", label: "Password", name: "password", id:"password",
 		  required: true, validate: webix.rules.isNotEmpty, invalidMessage: "Please enter your password!", validateEvent: "key",
 			on: { 
   			"onBlur": function() {
@@ -73,31 +92,39 @@ const loginForm = {
 			paddingX: 2,
 			borderless: true,
 			cols:[
-			  { view: "button", label: "LOGIN_DEFAULT_USER", click: function() {
-			    //$$('loginForm').setValues({email: "testuser1@liquido.de", password: "dummyPasswordHash"})
-			    //this.$scope.validateForm()
-			    this.$scope.app.getService("session").login("testuser1@liquido.de", "dummyPasswordHash")
-			    this.$scope.app.show("/app/start");    
-			  }},
+			  //----- DEBUG button that logs in a default user
+			  { view: "button", label: "DEFAULT_USER", 
+
+			    click: function() {
+				  	this.$scope.doLogin("testuser1@liquido.de", "dummyPasswordHash")
+				  }
+
+			  /*
+			    function() {
+				    //$$('loginForm').setValues({email: "testuser1@liquido.de", password: "dummyPasswordHash"})    <= validation does not work correctly this way
+				    $$('email').setValue("testuser1@liquido.de");
+				    $$('email').validate();
+						$$('password').setValue("dummyPasswordHash");
+						$$('password').validate();
+				    this.$scope.validateForm()
+				    var button = $$('loginFormSubmitButton')
+				    console.log(button)
+				    //this.$scope.app.getService("session").login("testuser1@liquido.de", "dummyPasswordHash")
+				    //this.$scope.app.show("/app/userHome");    
+				  }
+			  */
+			  },
 				{},
-				{ view: "button", label: "Login", type: "form", id:"loginFormSubmitButton", width: 150, click: 
-					function() {
+				{ view: "button", label: "Login", type: "form", id:"loginFormSubmitButton", width: 150, 
+				  click: function() {
 						var form = $$('loginForm')
 						if (form.validate()) {
 						  var email = form.elements.email.getValue()
 						  var pass  = form.elements.password.getValue()
-						  this.$scope.app.getService("session").login(email, pass)
-					    .then((user) => {
-					      webix.alert({title:"Login successfull", type:"alert-success", text:"Welcome "+user.profile.name})
-					      this.$scope.app.show("/app/start");	   //TODO: navigato to /app/userHome  after successfull login
-					    })
-					    .catch((err) => {
-					      webix.alert({title:"Cannot login!", type:"alert-warning", text:err})
-					    })
-							
-						}
+						  doLogin(email, pass)
+						}	
 					}
-				}
+				}				
 			]
 		}
 	],
@@ -110,6 +137,12 @@ const loginForm = {
 	*/
 	
 }
+
+
+if (conf.env == "DEV" || conf.env == "MOCK") {
+
+}
+
 
 // here comes the completely overengineered webix way of centering something *G*
 const centeredLoginForm = {

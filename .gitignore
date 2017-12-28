@@ -1,3 +1,7 @@
+.idea/
+liquido-webix.iml
+liquido-webix.sublime-project
+liquido-webix.sublime-workspace
 codebase/
 deploy/
 node_modules/

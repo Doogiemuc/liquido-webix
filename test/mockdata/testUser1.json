@@ -1,0 +1,19 @@
+{
+    "createdAt": "2017-12-28T09:51:59.576+0000",
+    "updatedAt": "2017-12-28T09:51:59.576+0000",
+    "id": 2,
+    "email": "testuser1@liquido.de",
+    "profile": {
+        "name": "Test User1",
+        "website": "http://www.liquido.de",
+        "picture": "/static/img/Avatar_32x32.jpeg"
+    },
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/liquido/v2/users/2"
+        },
+        "user": {
+            "href": "http://localhost:8080/liquido/v2/users/2"
+        }
+    }
+}

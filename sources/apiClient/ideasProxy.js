@@ -4,7 +4,7 @@
  */
  
 import conf from 'liquidoConfig'
-import replaceTokens from 'apiClient/apiHelper'
+import apiHelper from 'apiClient/apiHelper'
 
 /*
  * https://webix.com/snippet/8fd8d824
@@ -32,12 +32,13 @@ export default {
    * - page - the page to show
    * - size - size if one page 
 	 */
-	load:function(view, callback, params) {
+	load: function(view, callback, params) {
 	  var url
 	  params = webix.extend(params||{}, this.params||{}, true);
 	  
 	  //---- load all ideas (with sorting and paging)
 	  if (this.$filter == 0) {
+	  	console.log("loading all ideas filter=0 (with paging)");
   	  url = conf.url.base + conf.url.findIdeas
   		if(params && params.start !== undefined && params.count !== undefined) {   
   			var page = Math.floor(params.start / params.count)
@@ -54,15 +55,18 @@ export default {
   	} else
   	//---- load ideas created by current user
   	if (this.$filter == 1) {
-  	  console.log("loading ideas with filter 1(=created by current user)", view)
+  	  console.log("loading ideas: filter 1(=created by current user)")
   	  var sessionService = view.$scope.app.getService("session");
   	  console.log("user", sessionService.getUserURI())
   	  url = conf.url.base + conf.url.findCreatedBy + "?status=IDEA&user=" + sessionService.getUserURI()
-  	  params.start = 0
+  	  params.start = 0   // necessary for webix datatable
   	}else
   	//---- load ideas supported by current user
   	if (this.$filter == 2) {
-  	  
+  	  console.log("loading ideas: filter 2(=supported by current user)")
+  	  var sessionService = view.$scope.app.getService("session");
+  	  url = conf.url.base + conf.url.findSupportedBy + "?status=IDEA&user=" + sessionService.getUserURI()
+  	  params.start = 0
   	}
   	else
   	{
@@ -103,15 +107,18 @@ export default {
 	 * - view - the calling table view
 	 * - ideaId - id of the idea on the server (will become part of the URL that we post to)
 	 */
-	addCurrentUserAsSupporter: function(view, ideaId) {
-	  var sessionService = view.$scope.app.getService("session");
-	  var userURI = sessionService.getUserURI()
-  	//console.log("User", userURI, "supports idea", ideaId)
-	  var url = conf.url.base + replaceTokens(conf.url.lawSupporters, {lawId: ideaId})
+	addCurrentUserAsSupporter: function(userURI, ideaId) {
+  	//console.log("ideasProxy: User", userURI, "now supports idea", ideaId)
+	  var url = conf.url.base + apiHelper.replaceTokens(conf.url.lawSupporters, {lawId: ideaId})
 	  return webix.ajax().headers({"Content-Type":"text/uri-list"}).post(url, userURI)
 	    .then (res => { console.log("<= OK, added supporter", userURI, "to idea", ideaId) })
-	    .catch(err => { console.log("ERROR: cannot addCurrentUserAsSupporter!", err) })
+	    .catch(err => { 
+	    	console.log("ERROR: cannot addCurrentUserAsSupporter to idea="+ideaId, err) 
+	    	throw err;
+	    })
 	} 
+
+
 };
 
 
