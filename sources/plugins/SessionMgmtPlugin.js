@@ -9,7 +9,7 @@ export default function SessionMgmtPlugin(app, view, config) {
 		const logout = config.logout || "/logout";
 		//const afterLogin = config.afterLogin || app.config.start;
 		//const afterLogout = config.afterLogout || "/login";
-		const ping = 0;  // config.ping || 5 * 60 * 1000;
+		//const ping = config.ping || 5 * 60 * 1000;     // for sessin timeout
 		const findUserByEMailUrl = config.findUserByEMailUrl || "/users/search/findByEMail?email="
 		
 		let user = null
@@ -59,7 +59,7 @@ export default function SessionMgmtPlugin(app, view, config) {
 					.catch(err => {
 					  var errMsg
 					  if (err.status == 401) {
-					    errMsg = "Wrong password. Access denied."
+					    errMsg = "Unknown user or wrong password. Access denied."
 					  } else if (err.status == 404) {
 					    errMsg = "Cannot find user with email "+email
 					  } else {
@@ -111,7 +111,7 @@ export default function SessionMgmtPlugin(app, view, config) {
 		console.log("Registering session management service")
 		app.setService("session", service);
 		
-		/** When the event doLogout is published, then the service is called automatically */
+		/* When the event doLogout is fired, for example by any component, then this will be handled here */
 		webix.attachEvent('doLogout', function() {
 		  console.log("Event: doLogout")
 		  service.logout()

@@ -13,6 +13,10 @@ export default class IdeasView extends JetView {
 	
 	init(view) {
 		//---- need to save currentUser, because we need it in the column template functions
+
+		var service = this.app.getService('session');
+		console.log("Service", service)
+
 		currentUser = this.app.getService('session').getUser()
 		console.log("ideasTable init. currentUser=", currentUser)
 		//view.queryView({ view:"datatable" }).parse(ideasData);
@@ -23,9 +27,7 @@ export default class IdeasView extends JetView {
 	
 	/**
 	 * Set filter for type of ideas: all, own or only supported ideas.
-	 * Setting the filter inside ideasProxy is actually not a clean MVC design.
-	 * But I need to, sonce webix.datatable dynamically calls ideasProxy.load method when scrolling.
-	 * This is very usefull for very large datasets.
+	 * The rows in the table will be filtered depending on the filterId.
 	 */
 	setTableFilter(filterId) {
 	  this.$$('ideaTable').clearAll()
@@ -108,7 +110,7 @@ const grid = {
 	loadahead:0,
 	
 	//datatype:"ideasData",
-	//url: ideasProxy.load,
+	//url: ideasProxy.load,   //<== No static url. No webix proxy whe load dynamically
 	
 	/* does not work yet   from https://docs.webix.com/samples/15_datatable/07_resize/10_row_auto_height.html
 	on: {
@@ -125,7 +127,7 @@ const grid = {
 	  	var sessionService = this.$scope.app.getService("session");
 	    var userURI = sessionService.getUserURI()
 	    var rowItem = this.getItem(data.row)
-	    ideasProxy.addCurrentUserAsSupporter(userURI, data.row)
+	    ideasAdapter.addCurrentUserAsSupporter(userURI, data.row)
 	    .then(() => {
 	    	rowItem.supportedByCurrentUser = true
 	      rowItem.numSupporters++

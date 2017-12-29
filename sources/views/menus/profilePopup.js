@@ -43,7 +43,7 @@ export default {
           console.log("Goto Tasks")
           break;
         case "4":
-          webix.callEvent("doLogout");
+          webix.callEvent("doLogout");		// fire and event. Will be handled by SessionMgmtPlugin
           break;
         default:
           // default statements

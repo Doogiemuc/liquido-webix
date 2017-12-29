@@ -64,26 +64,25 @@ const loginForm = {
 		{ view: "text", label: "Email", name: "email", id: "email",
 		  required: true, validate: webix.rules.isEmail, invalidMessage: "Please enter a valid email!",
 			on: { "onBlur": function() { 
-				console.log("Validating email", this); 
-				var result = this.validate()    // validate only this field and show warning message under field if invalid
-				this.$scope.validateForm()
+				//console.log("Validating email"); 
+				this.validate()    							// validate only this field and show warning message under field if invalid
+				this.$scope.validateForm()			// disable/enable Submit button
 			}}
 		},
 		{ view: "text", type: "password", label: "Password", name: "password", id:"password",
 		  required: true, validate: webix.rules.isNotEmpty, invalidMessage: "Please enter your password!", validateEvent: "key",
 			on: { 
   			"onBlur": function() {
-  				console.log("Validating password"); 
+  				//console.log("Validating password"); 
   				this.validate() 
   				this.$scope.validateForm()
   			},
-  			/*
+  			/*  Buggy    Looses focus when invalid
   			"onKeyPress": function() {
-  			  console.log("Validating password"); 
-  				this.validate() 
-  				//this.$scope.validateForm()
+  			  console.log("Keypress in password", this.getValue()); 
+  				if (this.getValue() && this.getValue().length > 3) this.$scope.validateForm()
   			}
-  			*/
+  		*/  			
   		}
   		
 		},
@@ -121,7 +120,7 @@ const loginForm = {
 						if (form.validate()) {
 						  var email = form.elements.email.getValue()
 						  var pass  = form.elements.password.getValue()
-						  doLogin(email, pass)
+						  this.$scope.doLogin(email, pass)
 						}	
 					}
 				}				
