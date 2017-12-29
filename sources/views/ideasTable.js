@@ -1,5 +1,7 @@
 import {JetView} from "webix-jet";
-import ideasProxy from "apiClient/ideasProxy";
+//import ideasProxy from "apiClient/ideasProxy"
+import ideasAdapter from "apiClient/ideasAdapter"
+import conf from "liquidoConfig"
 
 var currentUser
 
@@ -10,13 +12,13 @@ export default class IdeasView extends JetView {
 	}
 	
 	init(view) {
-		//---- need to save currentUser, because we need in 		
+		//---- need to save currentUser, because we need it in the column template functions
 		currentUser = this.app.getService('session').getUser()
-		console.log("Current user in ideasTable", currentUser)
-
+		console.log("ideasTable init. currentUser=", currentUser)
 		//view.queryView({ view:"datatable" }).parse(ideasData);
-		//view.queryView({ view:"datatable" }).load(ideasProxy);
-		view.queryView({ view:"datatable" }).loadNext(20, 0, null, ideasProxy);  //   (count, start, <callback>, url/proxy)
+		//view.queryView({ view:"datatable" }).loadNext(20, 0, null, ideasProxy);  //   (count, start, <callback>, url/proxy)
+		//view.queryView({ view:"datatable" }).load(ideasAdapter.loadAllIdeas);
+		this.$$('ideaTable').load(ideasAdapter.loadAllIdeas);
 	}
 	
 	/**
@@ -26,9 +28,15 @@ export default class IdeasView extends JetView {
 	 * This is very usefull for very large datasets.
 	 */
 	setTableFilter(filterId) {
-	  this.$$('localIdeaTableId').clearAll()
-    ideasProxy.setFilter(filterId)
-    this.$$('localIdeaTableId').load(ideasProxy)
+	  this.$$('ideaTable').clearAll()
+	  var userURI = this.app.getService("session").getUserURI()
+	  switch (Number(filterId)) {
+	  	case 0: this.$$('ideaTable').load(ideasAdapter.loadAllIdeas); break;
+	  	case 1: this.$$('ideaTable').load(ideasAdapter.loadIdeasCreatedBy(userURI)); break;
+	  	case 2: this.$$('ideaTable').load(ideasAdapter.loadIdeasSupportedBy(userURI)); break;
+	  	default: console.log("wrong filterId");
+	  }
+
   }
 }
 
@@ -75,10 +83,10 @@ var supportedByButton = function (obj, common, value) {
 }
 
 const grid = {
-	id:"ideaData",
+	id:"ideaTable",
 	localId: "localIdeaTableId",
 	view:"datatable", 
-	select:true,
+	select:false,
 	footer:true,
 	columns:[
 		{id:"id", header:"#", width:40, css:{"text-align":"center"},
@@ -96,10 +104,11 @@ const grid = {
 	scrollX:false,
 	scrollY:true,
 	//pager:"ideasPager",
-	datafetch:20,              // How Webix datatable component handels dynamic loading: https://docs.webix.com/desktop__plain_dynamic_loading.html
+	datafetch:30,              // How Webix datatable component handels dynamic loading: https://docs.webix.com/desktop__plain_dynamic_loading.html
 	loadahead:0,
 	
 	//datatype:"ideasData",
+	//url: ideasProxy.load,
 	
 	/* does not work yet   from https://docs.webix.com/samples/15_datatable/07_resize/10_row_auto_height.html
 	on: {

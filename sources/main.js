@@ -17,14 +17,14 @@ webix.ready(function(){
 	var app = new JetApp({
 		id:			"Liquido",
 		name:		"Liquido Web Frontend",
-		version:	"2.1",
-		start:		"/app/start"
+		version:	"2.14",
+		start:		"/liquido/start"
 	});
 	
 	//----- Handler for generall webix errors 
 	app.attachEvent("app:error:resolve", function(name, err){
 		window.console.error(err);
-		webix.delay(() => this.show("/app/start"));
+		webix.delay(() => this.show(app.config.start));
 	});
 	
 	//----- Check we can reach our backend
@@ -39,15 +39,17 @@ webix.ready(function(){
 		findUserByEMailUrl: conf.url.base + conf.url.findUserByEmail
 	})
 	
+	
+
 	//----- Automatically login a dummy user if configured from webpack env
-	if (AUTOLOGIN) {
+	if (false /*AUTOLOGIN*/) {
 	  console.log("===> AUTOLOGIN "+conf.defaultUser)
 	  app.getService("session").login(conf.defaultUser, conf.defaultPass)
 	  .then(() => {
-	  	app.render()			//BUGFIX: race condition: render after login has been completed  (That was a hard one, but got it! Yeah!)
+	  	app.render();				// Must render the ui after the autologin
 	  })
 	} else {
-		app.render();  
+  	app.render();
 	}
 	
 	console.log("LIQUIDO started. env=", conf.env)

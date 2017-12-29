@@ -34,7 +34,7 @@ export default class LoginView extends JetView {
 	  this.app.getService("session").login(email, pass)
 	  .then((user) => {
 	    webix.alert({title:"Login successfull", type:"alert-success", text:"Welcome "+user.profile.name})
-	    this.app.show("/app/start");	   //TODO: navigato to /app/userHome  after successfull login
+	    this.app.show(this.app.config.start);	   //TODO: navigato to /app/userHome  after successfull login
 	  })
 	  .catch((err) => {
 	    webix.alert({title:"Cannot login!", type:"alert-warning", text:err})

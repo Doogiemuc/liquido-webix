@@ -10,11 +10,11 @@ module.exports = function(env) {
 	};
 
 	var config = {
-		entry: "./sources/liquido.js",
+		entry: "./sources/main.js",
 		output: {
 			path: path.join(__dirname, "codebase"),
 			publicPath:"/codebase/",
-			filename: "liquido.js"
+			filename: "main.js"
 		},
 		devtool: "inline-source-map",
 		devServer: {

@@ -9,7 +9,8 @@ import "views/webix/menutree";
 var that
 
 /**
- * Single page web application - Main Webix class for Liquido
+ * Main View class for Liquido. This class is responsible for the outer layout.
+ * This file should be called AppView. But its name appears in every URL. So I preferred to call it "liquido"
  */
 export default class AppView extends JetView {
 	config(){
@@ -22,15 +23,23 @@ export default class AppView extends JetView {
 		this.ui(profilePopup);
 		//$$('scrollviewId').adjust();  // must update the scrollview to make it adjust to its container
 		
+		console.log("attaching onAfterLogin event")
 		webix.attachEvent('onAfterLogin', (user) => {
 		  //console.log("event:onAfterLogin")
-		  this.showUserProfile()  
+		  this.showUserProfile()
 		})
 		
 		webix.attachEvent('onAfterLogout', () => {
 		  //console.log("event:onAfterLogout")
 		  this.hideUserProfile()
 		})
+
+		//===== If user is already logged in  (this might happen during debugging or via cookie)
+		var currentUser = this.app.getService('session').getUser()
+		if (currentUser) {
+			console.log("User", currentUser, "is already logged in.")
+			this.showUserProfile();
+		}
 		
 		that = this    //BUGFIX: webix.addView doesn't set this.$scope, which I need in the loginButton click handler below
 	}
@@ -80,7 +89,7 @@ var mainToolbar = {
 	view: "toolbar",
 	id: "mainToolbar",
 	elements:[
-		{ view: "label", label: "<a route='/app/start'><i class='fa fa-university'></i> LIQUIDO</a>", css:"liquido_title", width: 200},
+		{ view: "label", label: "<a href='/'><i class='fa fa-university'></i> LIQUIDO</a>", css:"liquido_title", width: 200},
 		{ view: "button", type:"next", label:"Ideas", align:"left", click: 
 		  function() { this.$scope.show("ideasTable") }  
 		},

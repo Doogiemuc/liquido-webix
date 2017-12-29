@@ -49,9 +49,10 @@ export default function SessionMgmtPlugin(app, view, config) {
 					.then(data => {
 						if (!data) {
 							console.log("ERROR: Cannot load user information. Got empty data. Access denied?")
-							throw ("Access denied")
+							return Promise.reject("Access denied")
 						}
 						user = data.json()					
+						console.log("Received logged in user", user)
 						webix.callEvent("onAfterLogin", user)
 						return user
 					})
@@ -110,12 +111,13 @@ export default function SessionMgmtPlugin(app, view, config) {
 		console.log("Registering session management service")
 		app.setService("session", service);
 		
+		/** When the event doLogout is published, then the service is called automatically */
 		webix.attachEvent('doLogout', function() {
 		  console.log("Event: doLogout")
 		  service.logout()
 		})
 				
-		/*    TODO:   protect internap pages, that can only be seen when logged in
+		/*    TODO:   protect internal pages, that can only be seen when logged in
 		function canNavigate(url, obj) {
 				if (url === logout) {
 						service.logout();
